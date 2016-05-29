@@ -1,4 +1,3 @@
-# Process.daemon
 require 'active_support'
 require 'active_support/core_ext'
 require 'oanda_api'
@@ -8,6 +7,8 @@ require 'json'
   require "./#{rb_file}.rb"
 end
 
+Process.daemon
+
 @signal         = OrderSignal.new
 @position_agent = PositionAgent.new
 @order_agent    = OrderAgent.new(@position_agent)
@@ -15,7 +16,7 @@ end
 Thread.start do
   loop do
     @signal.update
-    sleep 1
+    sleep 10
   end
 end
 
@@ -29,7 +30,7 @@ end
 Thread.start do
   loop do
     @order_agent.trade
-    sleep 1
+    sleep 5
   end
 end
 
