@@ -4,39 +4,33 @@ require 'active_support/core_ext'
 require 'oanda_api'
 require 'json'
 
-%w(api_client candle signals).each do |rb_file|
+%w(api_client candle signals order_agent position_agent).each do |rb_file|
   require "./#{rb_file}.rb"
 end
 
-require 'pry'
+@signal         = OrderSignal.new
+@position_agent = PositionAgent.new
+@order_agent    = OrderAgent.new(@position_agent)
 
-class OrderManager
-  def price
-    @client.prices(instruments: ["USD_JPY"]).get.first
+Thread.start do
+  loop do
+    @signal.update
+    sleep 1
   end
 end
 
-class TradeManager
+Thread.start do
+  loop do
+    @position_agent.update
+    sleep 1
+  end
 end
 
-@signal        = OrderSignal.new
-@order_manager = OrderManager.new
-@trade_manager = TradeManager.new
+Thread.start do
+  loop do
+    @order_agent.trade
+    sleep 1
+  end
+end
 
-puts @signal.update
-
-# Thread.start do
-#   loop do
-#     puts @signal.update
-#     sleep 0.5
-#   end
-# end
-#
-# Thread.start do
-#   loop do
-#     puts "ask: #{@signal.price.ask}"
-#     sleep 1
-#   end
-# end
-#
-# sleep 100
+sleep 10

@@ -1,7 +1,7 @@
 class ApiClient
   DEMO_ACCOUNT_ID = ENV.fetch("OANDA_DEMO_ACCOUNT_ID")
 
-  attr_accessor :client, :account_id
+  attr_reader :client
 
   def initialize(demo: true)
     if demo == true
@@ -13,6 +13,6 @@ class ApiClient
   end
 
   def account
-    @account ||= @client.account(account_id)
+    @account ||= @client.account(@account_id)
   end
 end
