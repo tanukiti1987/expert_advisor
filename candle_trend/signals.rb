@@ -1,5 +1,5 @@
 class OrderSignal
-  ENOUGH_PRICE_MOVEMENT = 0.01
+  ENOUGH_PRICE_MOVEMENT = 0.03
   REFERAL_CANDLES_NUM   = 3
   RESUTL_FILE_PATH      = 'signal.json'
 
@@ -23,9 +23,9 @@ class OrderSignal
     calndes = trim_completed(candles)
 
     trend =
-      if candles.all? {|c| bid_ask_trend(c) == :ask }
+      if candles.all? {|c| ask_candle?(c) } && candle_length(candles) > ENOUGH_PRICE_MOVEMENT
         'ask'
-      elsif candles.all? {|c| bid_ask_trend(c) == :bid }
+      elsif candles.all? {|c| bid_candle?(c) } && candle_length(candles) > ENOUGH_PRICE_MOVEMENT
         'bid'
       else
         'none'
@@ -38,16 +38,16 @@ class OrderSignal
     candles.select {|c| c.complete? }.last(REFERAL_CANDLES_NUM)
   end
 
-  def bid_ask_trend(candle)
-    return :none unless enough_price_movement?(candle)
+  def bid_candle?(candle)
+    candle.open_mid > candle.close_mid
+  end
 
-    if candle.open_mid > candle.close_mid
-      :bid
-    elsif candle.open_mid < candle.close_mid
-      :ask
-    else
-      :none
-    end
+  def ask_candle?(candle)
+    candle.open_mid < candle.close_mid
+  end
+
+  def candle_length(candles)
+    candles.inject(0.0) {|sum, c| sum + (c.open_mid - c.close_mid).abs }
   end
 
   def enough_price_movement?(candle)
