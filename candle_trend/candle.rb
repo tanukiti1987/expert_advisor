@@ -1,7 +1,7 @@
 class Candle
   attr_reader :instrument, :granularity, :time
 
-  DEFAULT_LENGTH_OF_TIME = 4.minutes
+  DEFAULT_LENGTH_OF_TIME = 3.minutes
 
   def initialize(instrument: 'USD_JPY', granularity: 'M1', time: DEFAULT_LENGTH_OF_TIME)
     @instrument = instrument

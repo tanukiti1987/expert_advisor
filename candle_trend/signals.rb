@@ -35,7 +35,7 @@ class OrderSignal
   end
 
   def trim_completed(candles)
-    canldes.select {|c| c.complete? }.last(REFERAL_CANDLES_NUM)
+    candles.select {|c| c.complete? }.last(REFERAL_CANDLES_NUM)
   end
 
   def bid_ask_trend(candle)

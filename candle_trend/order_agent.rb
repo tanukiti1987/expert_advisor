@@ -1,7 +1,7 @@
 class OrderAgent
   LAST_ORDERED_DATA_FILE_PATH = 'order_log.json'
   STOP_LOSS_PIPS = 5
-  TAKE_PROFIT_PIPS = 3
+  TAKE_PROFIT_PIPS = 10
 
   POSITION_UNITS = 5_000
 
@@ -14,18 +14,19 @@ class OrderAgent
 
   def trade
     if try_order? && !@position_agent.has_position?
-      trend = signal_data[:trend]
+      trend = signal_data["trend"]
+      side = trend == 'ask' ? 'buy' : 'sell'
 
       @account.order(
         instrument: "USD_JPY",
         type: "market",
-        side: trend,
+        side: side,
         units: POSITION_UNITS,
         take_profit: take_profit_price(trend),
         stop_loss: stop_loss_price(trend)
       ).create
 
-      save_log(signal_data[:signaled_at])
+      save_log(signal_data["signaled_at"])
     end
   end
 
@@ -60,13 +61,13 @@ class OrderAgent
 
   def signal_data
     open(OrderSignal::RESUTL_FILE_PATH) do |io|
-      JSON.load(io, symbolize_names: true)
+      JSON.load(io)
     end
   end
 
   def last_ordered_data
     open(LAST_ORDERED_DATA_FILE_PATH) do |io|
-      JSON.load(io, symbolize_names: true)
+      JSON.load(io)
     end
   end
 
@@ -74,7 +75,7 @@ class OrderAgent
     signal = signal_data
     last_ordered = last_ordered_data
 
-    signal[:trend] != 'none' &&
-      signal[:signaled_at] != last_ordered[:signaled_at]
+    signal["trend"] != 'none' &&
+      signal["signaled_at"] != last_ordered["signaled_at"]
   end
 end
