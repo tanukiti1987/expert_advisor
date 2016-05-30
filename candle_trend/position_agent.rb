@@ -8,7 +8,7 @@ class PositionAgent
   end
 
   def update
-    trade = @account.trades.get.select{|t| t.instrument == "USD_JPY" }.first
+    trade = target_trade
     return unless trade
     if trade.side == 'buy'
       if price.bid - trade.price > (NO_PROFIT_TIPS / 1000.0) && trade.stop_loss < trade.price && trade.stop_loss < (price.bid - (NO_PROFIT_TIPS / 1000.0))
@@ -22,7 +22,7 @@ class PositionAgent
   end
 
   def has_position?
-    @account.trades.get.select{|t| t.instrument == "USD_JPY" }.size != 0
+    target_trade != nil
   end
 
   private
@@ -31,7 +31,7 @@ class PositionAgent
     @client.prices(instruments: ["USD_JPY"]).get.first
   end
 
-  def trades
-    @account.trades.get
+  def target_trade
+    @account.trades.get.select{|t| t.instrument == "USD_JPY" }.first
   end
 end

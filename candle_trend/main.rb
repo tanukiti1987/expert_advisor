@@ -8,8 +8,6 @@ require 'pry'
   require "./#{rb_file}.rb"
 end
 
-# Process.daemon
-
 @signal         = OrderSignal.new
 @position_agent = PositionAgent.new
 @order_agent    = OrderAgent.new(@position_agent)
