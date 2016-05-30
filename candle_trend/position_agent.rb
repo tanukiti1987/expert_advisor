@@ -1,6 +1,5 @@
 class PositionAgent
-  NO_PROFIT_TIPS = 5
-  PRICE_ERROR = 0.01
+  PRICE_ERROR = 0.008
   TINY_PRICE_ERROR = 0.001
   GRADUAL_PROFIT_TIPS = 0.015
 
@@ -35,11 +34,11 @@ class PositionAgent
   private
 
   def bid_price
-    price.bid + PRICE_ERROR
+    price.bid.round(3) + PRICE_ERROR
   end
 
   def ask_price
-    price.ask + PRICE_ERROR
+    price.ask.round(3) + PRICE_ERROR
   end
 
   def price
