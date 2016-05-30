@@ -1,5 +1,8 @@
 class PositionAgent
-  NO_PROFIT_TIPS = 10
+  NO_PROFIT_TIPS = 5
+  PRICE_ERROR = 0.01
+  TINY_PRICE_ERROR = 0.001
+  GRADUAL_PROFIT_TIPS = 0.015
 
   def initialize
     api_client = ApiClient.new
@@ -11,12 +14,16 @@ class PositionAgent
     trade = target_trade
     return unless trade
     if trade.side == 'buy'
-      if price.bid - trade.price > (NO_PROFIT_TIPS / 1000.0) && trade.stop_loss < trade.price && trade.stop_loss < (price.bid - (NO_PROFIT_TIPS / 1000.0))
-        @account.trade(id: trade.id, stop_loss: price.bid - (NO_PROFIT_TIPS / 1000.0)).update
+      if bid_price - trade.price > 0 && trade.stop_loss < trade.price
+        @account.trade(id: trade.id, stop_loss: trade.price + TINY_PRICE_ERROR).update
+      elsif bid_price - trade.stop_loss > GRADUAL_PROFIT_TIPS && trade.stop_loss > trade.price
+        @account.trade(id: trade.id, stop_loss: bid_price - GRADUAL_PROFIT_TIPS).update
       end
     else
-      if trade.price - price.ask > (NO_PROFIT_TIPS / 1000.0) && trade.stop_loss > trade.price && trade.stop_loss > (price.ask + (NO_PROFIT_TIPS / 1000.0))
-        @account.trade(id: trade.id, stop_loss: price.ask + (NO_PROFIT_TIPS / 1000.0)).update
+      if trade.price - ask_price > 0 && trade.stop_loss > trade.price
+        @account.trade(id: trade.id, stop_loss: trade.price - TINY_PRICE_ERROR).update
+      elsif trade.stop_loss - ask_price > GRADUAL_PROFIT_TIPS && trade.stop_loss < trade.price
+        @account.trade(id: trade.id, stop_loss: ask_price + GRADUAL_PROFIT_TIPS).update
       end
     end
   end
@@ -26,6 +33,14 @@ class PositionAgent
   end
 
   private
+
+  def bid_price
+    price.bid + PRICE_ERROR
+  end
+
+  def ask_price
+    price.ask + PRICE_ERROR
+  end
 
   def price
     @client.prices(instruments: ["USD_JPY"]).get.first
