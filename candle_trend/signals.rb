@@ -20,8 +20,8 @@ class OrderSignal
 
   def analyze(candles)
     return if candles.size < REFERAL_CANDLES_NUM
-    calndes = trim_completed(candles)
 
+    candles = trim_completed(candles)
     trend =
       if candles.all? {|c| ask_candle?(c) } && candle_length(candles) > ENOUGH_PRICE_MOVEMENT
         'ask'
