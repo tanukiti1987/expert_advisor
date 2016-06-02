@@ -12,27 +12,11 @@ end
 @position_agent = PositionAgent.new
 @order_agent    = OrderAgent.new(@position_agent)
 
-signal_thread = Thread.new do
-  loop do
+loop do
+  @position_agent.update
+  unless @position_agent.has_position?
     @signal.update
-    sleep 1
-  end
-end
-
-position_agent_thread = Thread.new do
-  loop do
-    @position_agent.update
-    sleep 1
-  end
-end
-
-order_agent_thread = Thread.new do
-  loop do
     @order_agent.trade
-    sleep 1
   end
+  sleep 1
 end
-
-signal_thread.join
-position_agent_thread.join
-order_agent_thread.join
