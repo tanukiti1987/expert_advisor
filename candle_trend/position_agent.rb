@@ -2,6 +2,7 @@ class PositionAgent
   PRICE_ERROR = 0.008
   TINY_PRICE_ERROR = 0.002
   GRADUAL_PROFIT_TIPS = 0.015
+  FIRST_PROFIT_TIPS = 0.01
 
   def initialize
     api_client = ApiClient.new
@@ -13,13 +14,13 @@ class PositionAgent
     trade = target_trade
     return unless trade
     if trade.side == 'buy'
-      if bid_price - trade.price > 0 && trade.stop_loss < trade.price
+      if bid_price - trade.price > FIRST_PROFIT_TIPS && trade.stop_loss < trade.price
         @account.trade(id: trade.id, stop_loss: trade.price + TINY_PRICE_ERROR).update
       elsif bid_price - trade.stop_loss > GRADUAL_PROFIT_TIPS && trade.stop_loss > trade.price
         @account.trade(id: trade.id, stop_loss: bid_price - GRADUAL_PROFIT_TIPS).update
       end
     else
-      if trade.price - ask_price > 0 && trade.stop_loss > trade.price
+      if trade.price - ask_price > FIRST_PROFIT_TIPS && trade.stop_loss > trade.price
         @account.trade(id: trade.id, stop_loss: trade.price - TINY_PRICE_ERROR).update
       elsif trade.stop_loss - ask_price > GRADUAL_PROFIT_TIPS && trade.stop_loss < trade.price
         @account.trade(id: trade.id, stop_loss: ask_price + GRADUAL_PROFIT_TIPS).update
