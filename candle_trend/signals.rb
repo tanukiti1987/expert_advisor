@@ -24,9 +24,9 @@ class OrderSignal
     candles = trim_completed(candles)
     trend =
       if candles.all? {|c| ask_candle?(c) } && candle_length(candles) > ENOUGH_PRICE_MOVEMENT
-        'ask'
-      elsif candles.all? {|c| bid_candle?(c) } && candle_length(candles) > ENOUGH_PRICE_MOVEMENT
         'bid'
+      elsif candles.all? {|c| bid_candle?(c) } && candle_length(candles) > ENOUGH_PRICE_MOVEMENT
+        'ask'
       else
         'none'
       end
