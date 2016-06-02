@@ -25,6 +25,8 @@ class PositionAgent
         @account.trade(id: trade.id, stop_loss: ask_price + GRADUAL_PROFIT_TIPS).update
       end
     end
+  rescue OandaAPI::RequestError => e
+    nil
   end
 
   def has_position?

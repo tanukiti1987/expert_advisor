@@ -28,6 +28,8 @@ class OrderAgent
 
       save_log(signal_data["signaled_at"])
     end
+  rescue OandaAPI::RequestError => e
+    nil
   end
 
   def price
