@@ -1,6 +1,6 @@
 class OrderAgent
   LAST_ORDERED_DATA_FILE_PATH = 'order_log.json'
-  STOP_LOSS_PIPS = 5
+  STOP_LOSS_PIPS = 3.1
   TAKE_PROFIT_PIPS = 10
 
   POSITION_UNITS = 5_000

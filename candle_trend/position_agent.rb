@@ -1,6 +1,6 @@
 class PositionAgent
   PRICE_ERROR = 0.008
-  TINY_PRICE_ERROR = 0.001
+  TINY_PRICE_ERROR = 0.002
   GRADUAL_PROFIT_TIPS = 0.015
 
   def initialize
