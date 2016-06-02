@@ -13,6 +13,8 @@ class PositionAgent
   def update
     trade = target_trade
     return unless trade
+    return if close_signal_reverse(trade)
+
     if trade.side == 'buy'
       if bid_price - trade.price > FIRST_PROFIT_TIPS && trade.stop_loss < trade.price
         @account.trade(id: trade.id, stop_loss: trade.price + TINY_PRICE_ERROR).update
@@ -50,5 +52,21 @@ class PositionAgent
 
   def target_trade
     @account.trades.get.select{|t| t.instrument == "USD_JPY" }.first
+  end
+
+  def close_signal_reverse(trade)
+    signal = signal_data
+    if (signal["trend"] == 'ask' && trade.side == 'sell') ||
+      (signal["trend"] == 'bid' && trade.side == 'buy')
+      @account.trade(trade.id).close
+      return true
+    end
+    false
+  end
+
+  def signal_data
+    open(OrderSignal::RESUTL_FILE_PATH) do |io|
+      JSON.load(io)
+    end
   end
 end

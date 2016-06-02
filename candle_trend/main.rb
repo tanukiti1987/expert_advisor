@@ -14,9 +14,7 @@ end
 
 loop do
   @position_agent.update
-  unless @position_agent.has_position?
-    @signal.update
-    @order_agent.trade
-  end
+  @signal.update
+  @order_agent.trade
   sleep 1
 end
